@@ -40,3 +40,13 @@ jobs:
       - name: 'Run'
         run: |
           docker run --rm my-docker-image
+  cleanup:
+    runs-on: ubuntu-latest
+    needs: run
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          path: actions-docker-test
+      - name: 'Delete artifact'
+        run: |
+          ./actions-docker-test/cleanup.sh https://api.github.com/repos/$GITHUB_REPOSITORY/actions $GITHUB_RUN_ID
