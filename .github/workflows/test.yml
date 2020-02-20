@@ -1,0 +1,22 @@
+name: pre-merge-ci
+
+on: push
+
+jobs:
+  create-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          path: actions-docker-test
+      - name: 'Make docker image'
+        run: |
+          docker build -t my-docker-image actions-docker-test
+  run:
+    runs-on: ubuntu-latest
+    needs: create-image
+    steps:
+      - name: 'Run docker container'
+        run: |
+          docker run --rm my-docker-image
+
