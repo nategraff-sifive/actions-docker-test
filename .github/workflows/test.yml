@@ -12,10 +12,16 @@ jobs:
       - name: 'Make docker image'
         run: |
           docker build -t my-docker-image actions-docker-test
+      - name: 'List images'
+        run: |
+          docker image ls -a
   run:
     runs-on: ubuntu-latest
     needs: create-image
     steps:
+      - name: 'List images'
+        run: |
+          docker image ls -a
       - name: 'Run docker container'
         run: |
           docker run --rm my-docker-image
