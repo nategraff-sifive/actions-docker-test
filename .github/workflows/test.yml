@@ -16,13 +16,9 @@ jobs:
         run: |
           docker image ls -a
   run:
-    runs-on: ubuntu-latest
     needs: create-image
+    container:
+      image: my-docker-image
     steps:
-      - name: 'List images'
-        run: |
-          docker image ls -a
-      - name: 'Run docker container'
-        run: |
-          docker run --rm my-docker-image
-
+      - run: |
+          echo "Hello, world"
