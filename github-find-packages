@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -euox pipefail
+
+if [ "$#" -ne 2 ]; then
+  >&2 echo "$0: Script requires token and owner/repository as arguments"
+fi
+
+unset token
+unset owner
+unset repository
+token=$1
+owner=$(echo $2 | cut -d '/' -f 1)
+repository=$(echo $2 | cut -d '/' -f 2)
+
+curl -X POST \
+  -H "Authorization: bearer ${token}" \
+  -H "Accept: application/vnd.github.packages-preview+json" \
+  -d '{ "query" : "{ repository(owner:\"'"${owner}"'\" name:\"'"${repository}"'\") { packages(first: 10) { nodes { latestVersion { id } } } } }" }' \
+  https://api.github.com/graphql

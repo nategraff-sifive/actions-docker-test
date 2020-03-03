@@ -43,12 +43,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: run
     steps:
+      - uses: actions/checkout@v2
+        with:
+          path: actions-docker-test
       - name: "Get list of packages"
         run: |
-          curl -X POST \
-          -H "Authorization: bearer ${{ secrets.SECRET_TOKEN }}" \
-          -d '{ "query": "{ repository(owner:\"nategraff-sifive\" name:\"actions-docker-test\") { registryPackages(first:10) { nodes { id } } } }" }' \
-          https://api.github.com/graphql \
-          > packages.json
+          ${GITHUB_WORKSPACE}/actions-docker-test/github-find-packages ${{ secrets.SECRET_TOKEN }} ${{ github.repository }} > packages.json
       - name: "Print list of packages"
-        run: cat packages.json
+        run: |
+          cat packages.json
+      - name: "Delete packages"
+        run: |
+          jq -r .data.repository.packages.nodes[].latestVersion.id packages.json | xargs -n 1 ${GITHUB_WORKSPACE}/actions-docker-test/github-delete-package ${{ secrets.SECRET_TOKEN }}
