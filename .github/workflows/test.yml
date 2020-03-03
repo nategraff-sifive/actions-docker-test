@@ -43,9 +43,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: run
     steps:
-      - name: 'Authenticate to docker registry'
+      - name: "Get list of packages"
         run: |
-          docker login -u nategraff-sifive -p ${{ secrets.SECRET_TOKEN }} docker.pkg.github.com
-      - name: 'Delete image'
-        run: |
-          docker registry rmi docker.pkg.github.com/nategraff-sifive/actions-docker-test/my-docker-image:latest
+          curl -X POST \
+          -H "Authorization: bearer ${{ secrets.SECRET_TOKEN }}" \
+          -d '{ "query": "{ repository(owner:\"nategraff-sifive\" name:\"actions-docker-test\") { registryPackages(first:10) { nodes { id } } } }" }' \
+          https://api.github.com/graphql \
+          > packages.json
+      - name: "Print list of packages"
+        run: cat packages.json
