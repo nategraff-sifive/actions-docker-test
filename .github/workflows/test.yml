@@ -32,6 +32,7 @@ jobs:
       - name: 'Pull image artifact'
         run: |
           docker pull docker.pkg.github.com/nategraff-sifive/actions-docker-test/my-docker-image:latest
+          docker tag docker.pkg.github.com/nategraff-sifive/actions-docker-test/my-docker-image:latest my-docker-image
       - name: 'List images'
         run: |
           docker image ls -a
