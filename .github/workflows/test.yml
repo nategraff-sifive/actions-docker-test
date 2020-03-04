@@ -55,3 +55,9 @@ jobs:
       - name: "Delete packages"
         run: |
           jq -r .data.repository.packages.nodes[].latestVersion.id packages.json | xargs -n 1 ${GITHUB_WORKSPACE}/actions-docker-test/github-delete-package ${{ secrets.SECRET_TOKEN }}
+  always:
+    runs-on: ubuntu-latest
+    needs: cleanup
+    if: always()
+    steps:
+      - run: echo "I always run!"
